@@ -8,7 +8,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; background-color: #000; color: white; }
-        #player-container { position: relative; width: 100%; height: 80%; }
+        #player-container { position: relative; width: 100%; height: 60%; }
         #overlay {
             position: absolute;
             top: 10px;
@@ -36,7 +36,7 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 14px;
-            width: 40px;
+            width: 60px; /* Сделаем кнопки шире */
             height: 40px;
             display: flex;
             justify-content: center;
@@ -61,8 +61,8 @@
                 width: 80%;
             }
             .button {
-                width: 35px;
-                height: 35px;
+                width: 50px;
+                height: 40px;
                 font-size: 10px;
             }
         }
@@ -78,6 +78,7 @@
         <button class="button" id="nextGroupBtn"><span>Группа→</span></button>
         <button class="button" id="prevChannelBtn"><span>←Канал</span></button>
         <button class="button" id="nextChannelBtn"><span>Канал→</span></button>
+        <button class="button" id="fullscreenBtn"><span>❐</span></button> <!-- Кнопка полноэкранного режима -->
     </div>
 
     <script>
@@ -171,11 +172,38 @@
             playChannel(currentGroupIndex, currentChannelIndex);
         }
 
+        // Функция для переключения полноэкранного режима
+        function toggleFullscreen() {
+            const playerContainer = document.getElementById('player-container');
+            if (!document.fullscreenElement) {
+                if (playerContainer.requestFullscreen) {
+                    playerContainer.requestFullscreen();
+                } else if (playerContainer.mozRequestFullScreen) { // Firefox
+                    playerContainer.mozRequestFullScreen();
+                } else if (playerContainer.webkitRequestFullscreen) { // Chrome, Safari и Opera
+                    playerContainer.webkitRequestFullscreen();
+                } else if (playerContainer.msRequestFullscreen) { // IE/Edge
+                    playerContainer.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.mozCancelFullScreen) { // Firefox
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) { // Chrome, Safari и Opera
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { // IE/Edge
+                    document.msExitFullscreen();
+                }
+            }
+        }
+
         // Добавление обработчиков событий для кнопок
         document.getElementById('prevGroupBtn').addEventListener('click', () => changeGroup(-1));
         document.getElementById('nextGroupBtn').addEventListener('click', () => changeGroup(1));
         document.getElementById('prevChannelBtn').addEventListener('click', () => changeChannel(-1));
         document.getElementById('nextChannelBtn').addEventListener('click', () => changeChannel(1));
+        document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen); // Обработчик для полноэкранного режима
 
         // Загружаем плейлист при старте
         loadPlaylist();
