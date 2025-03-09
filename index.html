@@ -7,8 +7,8 @@
     <script src="https://cdn.jsdelivr.net/npm/clappr@latest"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #000; }
-        #player-container { position: relative; width: 100%; height: 100%; }
+        body { overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; background-color: #000; color: white; }
+        #player-container { position: relative; width: 100%; height: 60%; }
         #overlay {
             position: absolute;
             top: 10px;
@@ -20,6 +20,37 @@
             font-family: Arial, sans-serif;
             font-size: 14px;
         }
+        #controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .button {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #555;
+        }
+        @media (max-width: 600px) {
+            #player-container {
+                height: 50%;
+            }
+            #controls {
+                flex-direction: column;
+            }
+            .button {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -27,15 +58,19 @@
     <div id="overlay">
         <span id="status">Загрузка...</span>
     </div>
+    <div id="controls">
+        <button class="button" id="prevGroupBtn">Предыдущая группа</button>
+        <button class="button" id="nextGroupBtn">Следующая группа</button>
+        <button class="button" id="prevChannelBtn">Предыдущий канал</button>
+        <button class="button" id="nextChannelBtn">Следующий канал</button>
+    </div>
 
     <script>
-        // Функция для получения параметров из URL
         function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(param);
         }
 
-        // Получаем ключи из URL (передаются ботом)
         const jsonBinKey = getQueryParam("jsonbin_key");
         const jsonBinID = getQueryParam("jsonbin_id");
 
@@ -108,6 +143,24 @@
                 }
             });
         }
+
+        function changeGroup(direction) {
+            const totalGroups = playlist.length;
+            currentGroupIndex = (currentGroupIndex + direction + totalGroups) % totalGroups;
+            playChannel(currentGroupIndex, currentChannelIndex);
+        }
+
+        function changeChannel(direction) {
+            const totalChannels = playlist[currentGroupIndex].channels.length;
+            currentChannelIndex = (currentChannelIndex + direction + totalChannels) % totalChannels;
+            playChannel(currentGroupIndex, currentChannelIndex);
+        }
+
+        // Добавление обработчиков событий для кнопок
+        document.getElementById('prevGroupBtn').addEventListener('click', () => changeGroup(-1));
+        document.getElementById('nextGroupBtn').addEventListener('click', () => changeGroup(1));
+        document.getElementById('prevChannelBtn').addEventListener('click', () => changeChannel(-1));
+        document.getElementById('nextChannelBtn').addEventListener('click', () => changeChannel(1));
 
         // Загружаем плейлист при старте
         loadPlaylist();
