@@ -39,6 +39,9 @@
         .button:hover {
             background-color: #555;
         }
+        #fullscreenBtn {
+            background-color: #444;
+        }
         @media (max-width: 600px) {
             #player-container {
                 height: 50%;
@@ -63,6 +66,7 @@
         <button class="button" id="nextGroupBtn">Следующая группа</button>
         <button class="button" id="prevChannelBtn">Предыдущий канал</button>
         <button class="button" id="nextChannelBtn">Следующий канал</button>
+        <button class="button" id="fullscreenBtn">Полноэкранный режим</button>
     </div>
 
     <script>
@@ -156,11 +160,21 @@
             playChannel(currentGroupIndex, currentChannelIndex);
         }
 
+        function toggleFullscreen() {
+            const elem = document.getElementById('player-container');
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                elem.requestFullscreen();
+            }
+        }
+
         // Добавление обработчиков событий для кнопок
         document.getElementById('prevGroupBtn').addEventListener('click', () => changeGroup(-1));
         document.getElementById('nextGroupBtn').addEventListener('click', () => changeGroup(1));
         document.getElementById('prevChannelBtn').addEventListener('click', () => changeChannel(-1));
         document.getElementById('nextChannelBtn').addEventListener('click', () => changeChannel(1));
+        document.getElementById('fullscreenBtn').addEventListener('click', toggleFullscreen);
 
         // Загружаем плейлист при старте
         loadPlaylist();
